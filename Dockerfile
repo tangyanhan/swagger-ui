@@ -1,14 +1,16 @@
-FROM golang:1.15 as build
+FROM golang:1.14.3 as build
 
 WORKDIR /build
 COPY . .
-RUN go build ./cmd/swagger-ui
+ENV GOPROXY=https://goproxy.cn
+RUN go build -ldflags "-linkmode external -extldflags '-static' -s -w" ./cmd/swagger-ui
 
 FROM busybox:1.31.1-glibc
 
 WORKDIR /swagger
 COPY --from=build /build/swagger-ui .
-COPY --from=build /build/ui ./
-COPY --from=build /build/index.html ./
+COPY --from=build /build/ui ./ui
+COPY --from=build /build/*.html ./
+VOLUME [ "/data" ]
 
-ENTRYPOINT [ "/swagger/swagger-ui" ]
+ENTRYPOINT [ "/swagger/swagger-ui", "-db", "/data/db.sqlite3" ]

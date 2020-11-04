@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"html/template"
 	"io/ioutil"
 	"log"
+	"text/template"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -20,8 +20,9 @@ type Repo struct {
 
 // Branch branch
 type Branch struct {
-	Name string
-	Link string
+	Name        string
+	Description string
+	Link        string
 }
 
 func main() {
@@ -60,9 +61,13 @@ func main() {
 		}
 		c.Writer.WriteString(doc.Content)
 	})
+	g.GET("/upload", func(c *gin.Context) {
+		c.File("./upload.html")
+	})
 	g.POST("/swagger", func(c *gin.Context) {
 		repo := c.PostForm("repo")
 		branch := c.PostForm("branch")
+		description := c.PostForm("description")
 		swaggerFile, err := c.FormFile("content")
 		if err != nil {
 			c.AbortWithError(400, err)
@@ -90,6 +95,7 @@ func main() {
 				return
 			}
 		}
+		doc.Description = description
 		doc.Content = string(content)
 		if err := CreateDoc(db, doc); err != nil {
 			c.AbortWithError(500, err)
@@ -114,8 +120,9 @@ func main() {
 		for _, v := range all {
 			orig := data.Repos[v.Repo]
 			orig = append(orig, Branch{
-				Name: v.Branch,
-				Link: "/?repo=" + v.Repo + "&branch=" + v.Branch,
+				Name:        v.Branch,
+				Description: v.Description,
+				Link:        "/?repo=" + v.Repo + "&branch=" + v.Branch,
 			})
 			data.Repos[v.Repo] = orig
 		}

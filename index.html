@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <title>Swagger UI</title>
     <link rel="stylesheet" type="text/css" href="./ui/swagger-ui.css">
-    <link rel="icon" type="image/png" href="./favicon-32x32.png" sizes="32x32" />
-    <link rel="icon" type="image/png" href="./favicon-16x16.png" sizes="16x16" />
+    <link rel="icon" type="image/png" href="./ui/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="./ui/favicon-16x16.png" sizes="16x16" />
     <style>
         html {
             box-sizing: border-box;
@@ -26,33 +26,21 @@
             background: #fafafa;
         }
     </style>
-    <script>
-        function getQueryVariable(variable)
-        {
-            var query = window.location.search.substring(1);
-            var vars = query.split("&");
-            for (var i=0;i<vars.length;i++) {
-                    var pair = vars[i].split("=");
-                    if(pair[0] == variable){return pair[1];}
-            }
-            return(false);
-        }
-        var repo = getQueryVariable("repo");
-        var branch = getQueryVariable("branch");
-        if(branch == "") {
-            branch = "master";
-        }
-    </script>
 </head>
-
 <body>
-    <select  onchange="self.location.href=options[selectedIndex].value">
-        {{ range $name, $branches := .Repos }}
-            {{ range $branches }}
-            <option value="{{ .Link }}">{{ $name }} - {{ .Name }}</option>
-            {{ end }}
+    <details>
+        <summary>Repo and Branches</summary>
+        
+            {{ range $name, $branches := .Repos }}
+            <p>Repository: {{ $name }}</p>
+                <ul style="list-style: none;"></ul>
+                {{ range $branches }}
+                    <li><a href="{{ .Link }}">{{ .Name }}</a> {{ .Description }}</li>
+                {{ end }}
+                </ul>
         {{ end }}
-    </select>
+        
+      </details>
     <div id="swagger-ui"></div>
 
     <script src="./ui/swagger-ui-bundle.js">

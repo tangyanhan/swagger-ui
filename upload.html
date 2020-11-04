@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="/ui/swagger-ui.css">
+    <link rel="icon" type="image/png" href="/ui/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/ui/favicon-16x16.png" sizes="16x16" />
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit;
+        }
+        
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <form action="/swagger" method="POST" enctype="multipart/form-data" target="$(this).contents().find('body').text()">
+        <p>仓库</p>
+        <input type="text" name="repo" title="仓库" value="efc/efc-protos"><br>
+        <p>Swagger文件</p>
+        <input type="file" name="content" title="选择上传Swagger文档"><br>
+        <p>分支</p>
+        <input type="text" name="branch" title="分支"><br>
+        <p>描述</p>
+        <input type="text" name="description" title="描述"><br><br>
+        <input type="submit" title="Submit">
+    </form>
+</body>
+</html>

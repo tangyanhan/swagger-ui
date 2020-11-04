@@ -32,14 +32,16 @@ func NewGorm(dbPath string) (db *gorm.DB) {
 const tableDoc = "doc"
 
 type Doc struct {
-	ID         int `gorm:"primaryKey;autoincrement"`
-	Repo       string
-	Branch     string
-	UploadedAt int64
-	Content    string
+	ID          int `gorm:"primaryKey;autoincrement"`
+	Repo        string
+	Branch      string
+	Description string
+	UploadedAt  int64
+	Content     string
 }
 
 func CreateDoc(db *gorm.DB, doc *Doc) error {
+	doc.UploadedAt = time.Now().Unix()
 	return db.Save(doc).Error
 }
 
@@ -49,15 +51,9 @@ func GetByRepoBranch(db *gorm.DB, repo, branch string) (*Doc, error) {
 	return v, err
 }
 
-func GetByID(db *gorm.DB, id int) (*Doc, error) {
-	v := new(Doc)
-	err := db.Where("id=?", id).Find(v).Error
-	return v, err
-}
-
 func List(db *gorm.DB) ([]*Doc, error) {
 	list := make([]*Doc, 0)
-	err := db.Table(tableDoc).Select("id, repo, branch, uploaded_at").Find(&list).Error
+	err := db.Table(tableDoc).Select("id, repo, branch, description, uploaded_at").Order("uploaded_at DESC").Find(&list).Error
 	if gorm.IsRecordNotFoundError(err) {
 		return list, nil
 	}
